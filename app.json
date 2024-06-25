@@ -18,10 +18,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.matheushcandido.gymtracker"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "30e35244-3aa7-41ff-beb3-4dbf9eb31ce1"
+      }
+    },
+    "owner": "matheushcandido"
   }
 }
