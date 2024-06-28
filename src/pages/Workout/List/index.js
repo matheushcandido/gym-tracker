@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { database } from "../../../config/firebaseconfig";
 import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
-import styles from "./style"
+import styles from "./style";
 
 export default function ListWorkout({ navigation }) {
     const [workout, setWorkout] = useState([]);
@@ -17,10 +17,19 @@ export default function ListWorkout({ navigation }) {
             const list = [];
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                const date = data.date && data.date.seconds ? new Date(data.date.seconds * 1000).toLocaleDateString() : '';
-                list.push({ ...data, id: doc.id, date });
+                const date = data.date && data.date.seconds ? new Date(data.date.seconds * 1000) : null;
+                if (date) {
+                    list.push({ ...data, id: doc.id, date });
+                }
             });
-            setWorkout(list);
+
+            list.sort((a, b) => b.date - a.date);
+            
+            const formattedList = list.map(item => ({
+                ...item,
+                date: item.date.toLocaleDateString()
+            }));
+            setWorkout(formattedList);
         });
 
         return () => unsubscribe();
@@ -34,7 +43,11 @@ export default function ListWorkout({ navigation }) {
                 renderItem={({ item }) => (
                     <View style={styles.Workouts}>
                         <Text style={styles.WorkoutDate}
-                        onPress={() => { navigation.navigate("WorkoutDetails", {id: item.id, date: item.date, exerciseId: item.exerciseId, repetitions: item.repetitions, weight: item.weight}) }}
+                        onPress={() => { navigation.navigate("WorkoutDetails", {
+                            id: item.id,
+                            date: item.date,
+                            exercises: item.exercises
+                        }) }}
                         >{item.date}</Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWorkout(item.id)}>
                             <FontAwesome name="trash" size={23} color="#F92e6A">

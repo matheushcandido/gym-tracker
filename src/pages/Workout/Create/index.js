@@ -40,7 +40,6 @@ export default function CreateWorkout({ navigation }) {
       weight: parseFloat(weight)
     }]);
     
-    // Reset fields for next exercise
     setSelectedExercise("default");
     setRepetitions("");
     setWeight("");
