@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import { auth } from '../../../config/firebaseconfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import styles from './style';
 
 export default function Register({ navigation }) {
@@ -9,7 +10,7 @@ export default function Register({ navigation }) {
 
     const register = async () => {
         try {
-            await auth().createUserWithEmailAndPassword(email, password);
+            await createUserWithEmailAndPassword(auth, email, password);
             Alert.alert('Success', 'Account created successfully');
             navigation.navigate('Login');
         } catch (error) {

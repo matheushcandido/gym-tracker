@@ -13,8 +13,12 @@ import ListWorkouts from "./src/pages/Workout/List";
 import CreateWorkouts from "./src/pages/Workout/Create";
 import DetailsWorkouts from "./src/pages/Workout/Details";
 
+import Login from "./src/pages/Authentication/Login";
+import Register from "./src/pages/Authentication/Register";
+
 const ExerciseStack = createStackNavigator();
 const WorkoutStack = createStackNavigator();
+const AuthStack = createStackNavigator(); // Novo stack para autenticação
 const Tab = createBottomTabNavigator();
 
 function ExerciseStackScreen() {
@@ -37,6 +41,15 @@ function WorkoutStackScreen() {
   );
 }
 
+function AuthStackScreen() {
+  return (
+    <AuthStack.Navigator initialRouteName="Login">
+      <AuthStack.Screen name="Login" component={Login} />
+      <AuthStack.Screen name="Register" component={Register} />
+    </AuthStack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -49,6 +62,8 @@ export default function App() {
               iconName = 'dumbbell';
             } else if (route.name === 'Workouts') {
               iconName = 'calendar-alt';
+            } else if (route.name === 'Auth') {
+              iconName = 'user';
             }
 
             return <FontAwesome5 name={iconName} size={size} color={color} />;
@@ -57,6 +72,7 @@ export default function App() {
       >
         <Tab.Screen name="Exercises" component={ExerciseStackScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Workouts" component={WorkoutStackScreen} options={{ headerShown: false }} />
+        <Tab.Screen name="Auth" component={AuthStackScreen} options={{ headerShown: false }} />
       </Tab.Navigator>
     </NavigationContainer>
   );
