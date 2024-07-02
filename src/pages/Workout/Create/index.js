@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, Modal, FlatList } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { database } from "../../../config/firebaseconfig";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import styles from "../Create/style";
@@ -12,6 +13,7 @@ export default function CreateWorkout({ navigation }) {
   const [repetitions, setRepetitions] = useState("");
   const [weight, setWeight] = useState("");
   const [date, setDate] = useState(new Date());
+  const [userId, setUserId] = useState(null);
   const [exerciseList, setExerciseList] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -26,6 +28,20 @@ export default function CreateWorkout({ navigation }) {
     };
 
     fetchExercises();
+
+    const fetchUserId = async () => {
+      try {
+          const userData = await AsyncStorage.getItem('user');
+          if (userData !== null) {
+              const user = JSON.parse(userData);
+              setUserId(user.uid);
+          }
+      } catch (error) {
+          console.error('Error retrieving user data:', error);
+      }
+  };
+
+    fetchUserId();
   }, []);
 
   const addExerciseToList = () => {
@@ -37,7 +53,7 @@ export default function CreateWorkout({ navigation }) {
     setExerciseList([...exerciseList, {
       exerciseId: selectedExercise,
       repetitions: parseInt(repetitions),
-      weight: parseFloat(weight)
+      weight: parseFloat(weight),
     }]);
     
     setSelectedExercise("default");
@@ -56,6 +72,7 @@ export default function CreateWorkout({ navigation }) {
       await addDoc(collection(database, "Workouts"), {
         exercises: exerciseList,
         date: date,
+        userId: userId
       });
       navigation.navigate("WorkoutList");
     } catch (error) {

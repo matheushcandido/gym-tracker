@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { auth } from '../../../config/firebaseconfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './style';
+import { AuthContext } from '../../../config/authcontext'
 
 export default function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { setUser } = useContext(AuthContext);
 
     const login = async () => {
         try {
@@ -15,11 +17,11 @@ export default function Login({ navigation }) {
             const user = userCredential.user;
 
             await AsyncStorage.setItem('user', JSON.stringify(user));
+            setUser(user);
 
-            Alert.alert('Success', 'Logged in successfully');
             navigation.navigate("Workouts");
         } catch (error) {
-            Alert.alert('Error', error.message);
+            Alert.alert('Erro', "Email ou senha incorretos.");
         }
     };
 
@@ -42,7 +44,7 @@ export default function Login({ navigation }) {
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text>Don't have an account? Register</Text>
+                <Text>Não tem uma conta? Clique aqui e se registre!</Text>
             </TouchableOpacity>
         </View>
     );

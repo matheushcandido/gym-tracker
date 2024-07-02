@@ -11,10 +11,10 @@ export default function Register({ navigation }) {
     const register = async () => {
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            Alert.alert('Success', 'Account created successfully');
+            Alert.alert('Sucesso', 'Conta criada com sucesso.');
             navigation.navigate('Login');
         } catch (error) {
-            Alert.alert('Error', error.message);
+            Alert.alert('Erro', error.message);
         }
     };
 
@@ -34,10 +34,10 @@ export default function Register({ navigation }) {
                 secureTextEntry
             />
             <TouchableOpacity style={styles.button} onPress={register}>
-                <Text style={styles.buttonText}>Register</Text>
+                <Text style={styles.buttonText}>Salvar</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text>Already have an account? Login</Text>
+                <Text>Já tem uma conta? Clique aqui e faça login.</Text>
             </TouchableOpacity>
         </View>
     );

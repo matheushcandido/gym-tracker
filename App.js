@@ -1,5 +1,6 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+// App.js
+import React, { useContext } from "react";
+import { StyleSheet, ActivityIndicator, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,9 +17,12 @@ import DetailsWorkouts from "./src/pages/Workout/Details";
 import Login from "./src/pages/Authentication/Login";
 import Register from "./src/pages/Authentication/Register";
 
+import { AuthProvider, AuthContext } from "./src/config/authcontext"
+import Logout from './src/pages/Logout';
+
 const ExerciseStack = createStackNavigator();
 const WorkoutStack = createStackNavigator();
-const AuthStack = createStackNavigator(); // Novo stack para autenticação
+const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function ExerciseStackScreen() {
@@ -50,39 +54,67 @@ function AuthStackScreen() {
   );
 }
 
+function AppNavigator() {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+
+          if (route.name === 'Exercises') {
+            iconName = 'dumbbell';
+          } else if (route.name === 'Workouts') {
+            iconName = 'calendar-alt';
+          } else if (route.name === 'Auth') {
+            iconName = 'user';
+          }
+
+          return <FontAwesome5 name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      {user ? (
+        <>
+          <Tab.Screen name="Exercises" component={ExerciseStackScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Workouts" component={WorkoutStackScreen} options={{ headerShown: false }} />
+          <Tab.Screen
+            name="Logout"
+            options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="sign-out-alt" size={size} color={color} /> }}
+          >
+            {() => <Logout />}
+          </Tab.Screen>
+        </>
+      ) : (
+        <Tab.Screen name="Auth" component={AuthStackScreen} options={{ headerShown: false }} />
+      )}
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-
-            if (route.name === 'Exercises') {
-              iconName = 'dumbbell';
-            } else if (route.name === 'Workouts') {
-              iconName = 'calendar-alt';
-            } else if (route.name === 'Auth') {
-              iconName = 'user';
-            }
-
-            return <FontAwesome5 name={iconName} size={size} color={color} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Exercises" component={ExerciseStackScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="Workouts" component={WorkoutStackScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="Auth" component={AuthStackScreen} options={{ headerShown: false }} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
