@@ -2,38 +2,55 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { database } from "../../../config/firebaseconfig";
-import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import styles from "./style";
 
 export default function ListWorkout({ navigation }) {
     const [workout, setWorkout] = useState([]);
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const userData = await AsyncStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                setUserId(user.uid);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        if (userId) {
+            const q = query(collection(database, "Workouts"), where("userId", "==", userId));
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const list = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const date = data.date && data.date.seconds ? new Date(data.date.seconds * 1000) : null;
+                    if (date) {
+                        list.push({ ...data, id: doc.id, date });
+                    }
+                });
+
+                list.sort((a, b) => b.date - a.date);
+
+                const formattedList = list.map(item => ({
+                    ...item,
+                    date: item.date.toLocaleDateString()
+                }));
+                setWorkout(formattedList);
+            });
+
+            return () => unsubscribe();
+        }
+    }, [userId]);
 
     function deleteWorkout(id) {
         deleteDoc(doc(database, "Workouts", id));
     }
-
-    useEffect(() => {
-        const unsubscribe = onSnapshot(collection(database, "Workouts"), (querySnapshot) => {
-            const list = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const date = data.date && data.date.seconds ? new Date(data.date.seconds * 1000) : null;
-                if (date) {
-                    list.push({ ...data, id: doc.id, date });
-                }
-            });
-
-            list.sort((a, b) => b.date - a.date);
-            
-            const formattedList = list.map(item => ({
-                ...item,
-                date: item.date.toLocaleDateString()
-            }));
-            setWorkout(formattedList);
-        });
-
-        return () => unsubscribe();
-    }, []);
 
     return (
         <View style={styles.container}>

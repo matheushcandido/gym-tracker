@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { database } from "../../../config/firebaseconfig";
+import { collection, query, where, onSnapshot, deleteDoc } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import styles from "./style";
 
-export default function ListExercise({ navigation }) {
-    const [exercise, setExercise] = useState([]);
+export default function ListWeight({ navigation }) {
+    const [weight, setWeight] = useState([]);
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -24,39 +24,39 @@ export default function ListExercise({ navigation }) {
 
     useEffect(() => {
         if (userId) {
-            const q = query(collection(database, "Exercises"), where("userId", "==", userId));
+            const q = query(collection(database, "Weights"), where("userId", "==", userId));
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const list = [];
                 querySnapshot.forEach((doc) => {
                     list.push({ ...doc.data(), id: doc.id });
                 });
-                setExercise(list);
+                setWeight(list);
             });
 
             return () => unsubscribe();
         }
     }, [userId]);
 
-    function deleteExercise(id) {
-        deleteDoc(doc(database, "Exercises", id));
+    function deleteWeight(id) {
+        deleteDoc(doc(database, "Weights", id));
     }
 
     return (
         <View style={styles.container}>
             <FlatList
-                data={exercise}
+                data={weight}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <View style={styles.Exercises}>
-                        <Text style={styles.DescriptionExercise} onPress={() => { navigation.navigate("ExerciseDetails", { id: item.id, name: item.name }) }}>{item.name}</Text>
-                        <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteExercise(item.id)}>
+                    <View style={styles.Weights}>
+                        <Text style={styles.TextWeight} onPress={() => { navigation.navigate("WeightDetails", { id: item.id, weight: item.weight, date: item.date }) }}>{item.weight}</Text>
+                        <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWeight(item.id)}>
                             <FontAwesome name="trash" size={23} color="#F92e6A">
                             </FontAwesome>
                         </TouchableOpacity>
                     </View>
                 )}
             />
-            <TouchableOpacity style={styles.buttonNew} onPress={() => navigation.navigate("CreateExercise")}>
+            <TouchableOpacity style={styles.buttonNew} onPress={() => navigation.navigate("CreateWeight")}>
                 <Text style={styles.iconButton}>+</Text>
             </TouchableOpacity>
         </View>

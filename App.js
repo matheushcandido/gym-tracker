@@ -14,6 +14,10 @@ import ListWorkouts from "./src/pages/Workout/List";
 import CreateWorkouts from "./src/pages/Workout/Create";
 import DetailsWorkouts from "./src/pages/Workout/Details";
 
+import ListWeights from "./src/pages/Weight/List";
+import CreateWeights from "./src/pages/Weight/Create";
+import DetailsWeights from "./src/pages/Weight/Details";
+
 import Login from "./src/pages/Authentication/Login";
 import Register from "./src/pages/Authentication/Register";
 
@@ -22,6 +26,7 @@ import Logout from './src/pages/Logout';
 
 const ExerciseStack = createStackNavigator();
 const WorkoutStack = createStackNavigator();
+const WeightStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -42,6 +47,16 @@ function WorkoutStackScreen() {
       <WorkoutStack.Screen name="CreateWorkout" component={CreateWorkouts} />
       <WorkoutStack.Screen name="WorkoutDetails" component={DetailsWorkouts} />
     </WorkoutStack.Navigator>
+  );
+}
+
+function WeightStackScreen() {
+  return (
+    <WeightStack.Navigator initialRouteName="WeightList">
+      <WeightStack.Screen name="WeightList" component={ListWeights} />
+      <WeightStack.Screen name="CreateWeight" component={CreateWeights} />
+      <WeightStack.Screen name="WeightDetails" component={DetailsWeights} />
+    </WeightStack.Navigator>
   );
 }
 
@@ -75,6 +90,8 @@ function AppNavigator() {
             iconName = 'dumbbell';
           } else if (route.name === 'Workouts') {
             iconName = 'calendar-alt';
+          } else if (route.name === 'Weights') {
+              iconName = 'weight';
           } else if (route.name === 'Auth') {
             iconName = 'user';
           }
@@ -87,6 +104,7 @@ function AppNavigator() {
         <>
           <Tab.Screen name="Exercises" component={ExerciseStackScreen} options={{ headerShown: false }} />
           <Tab.Screen name="Workouts" component={WorkoutStackScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Weights" component={WeightStackScreen} options={{ headerShown: false }} />
           <Tab.Screen
             name="Logout"
             options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="sign-out-alt" size={size} color={color} /> }}
