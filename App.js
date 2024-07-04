@@ -33,9 +33,9 @@ const Tab = createBottomTabNavigator();
 function ExerciseStackScreen() {
   return (
     <ExerciseStack.Navigator initialRouteName="ExerciseList">
-      <ExerciseStack.Screen name="ExerciseList" component={ListExercises} />
-      <ExerciseStack.Screen name="CreateExercise" component={CreateExercises} />
-      <ExerciseStack.Screen name="ExerciseDetails" component={DetailsExercises} />
+      <ExerciseStack.Screen name="ExerciseList" component={ListExercises} options={{ title: 'Lista de exercícios' }}/>
+      <ExerciseStack.Screen name="CreateExercise" component={CreateExercises} options={{ title: 'Criar um novo exercício' }}/>
+      <ExerciseStack.Screen name="ExerciseDetails" component={DetailsExercises} options={{ title: 'Detalhes do exercício' }}/>
     </ExerciseStack.Navigator>
   );
 }
@@ -43,9 +43,9 @@ function ExerciseStackScreen() {
 function WorkoutStackScreen() {
   return (
     <WorkoutStack.Navigator initialRouteName="WorkoutList">
-      <WorkoutStack.Screen name="WorkoutList" component={ListWorkouts} />
-      <WorkoutStack.Screen name="CreateWorkout" component={CreateWorkouts} />
-      <WorkoutStack.Screen name="WorkoutDetails" component={DetailsWorkouts} />
+      <WorkoutStack.Screen name="WorkoutList" component={ListWorkouts} options={{ title: 'Lista de treinos' }}/>
+      <WorkoutStack.Screen name="CreateWorkout" component={CreateWorkouts} options={{ title: 'Criar um novo treino' }}/>
+      <WorkoutStack.Screen name="WorkoutDetails" component={DetailsWorkouts} options={{ title: 'Detalhes do treino' }}/>
     </WorkoutStack.Navigator>
   );
 }
@@ -53,9 +53,9 @@ function WorkoutStackScreen() {
 function WeightStackScreen() {
   return (
     <WeightStack.Navigator initialRouteName="WeightList">
-      <WeightStack.Screen name="WeightList" component={ListWeights} />
-      <WeightStack.Screen name="CreateWeight" component={CreateWeights} />
-      <WeightStack.Screen name="WeightDetails" component={DetailsWeights} />
+      <WeightStack.Screen name="WeightList" component={ListWeights} options={{ title: 'Lista de pesos' }}/>
+      <WeightStack.Screen name="CreateWeight" component={CreateWeights} options={{ title: 'Criar um novo peso' }}/>
+      <WeightStack.Screen name="WeightDetails" component={DetailsWeights} options={{ title: 'Detalhes do peso' }}/>
     </WeightStack.Navigator>
   );
 }
@@ -64,7 +64,7 @@ function AuthStackScreen() {
   return (
     <AuthStack.Navigator initialRouteName="Login">
       <AuthStack.Screen name="Login" component={Login} />
-      <AuthStack.Screen name="Register" component={Register} />
+      <AuthStack.Screen name="Register" component={Register} options={{ title: 'Registrar-se' }}/>
     </AuthStack.Navigator>
   );
 }
@@ -102,9 +102,9 @@ function AppNavigator() {
     >
       {user ? (
         <>
-          <Tab.Screen name="Exercises" component={ExerciseStackScreen} options={{ headerShown: false }} />
-          <Tab.Screen name="Workouts" component={WorkoutStackScreen} options={{ headerShown: false }} />
-          <Tab.Screen name="Weights" component={WeightStackScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Exercises" component={ExerciseStackScreen} options={{ headerShown: false, title: "Exercícios" }} />
+          <Tab.Screen name="Workouts" component={WorkoutStackScreen} options={{ headerShown: false, title: "Treinos" }} />
+          <Tab.Screen name="Weights" component={WeightStackScreen} options={{ headerShown: false, title: "Peso" }} />
           <Tab.Screen
             name="Logout"
             options={{ tabBarIcon: ({ color, size }) => <FontAwesome5 name="sign-out-alt" size={size} color={color} /> }}
@@ -113,7 +113,7 @@ function AppNavigator() {
           </Tab.Screen>
         </>
       ) : (
-        <Tab.Screen name="Auth" component={AuthStackScreen} options={{ headerShown: false }} />
+        <Tab.Screen name="Auth" component={AuthStackScreen} options={{ headerShown: false, title: "Autenticação" }} />
       )}
     </Tab.Navigator>
   );

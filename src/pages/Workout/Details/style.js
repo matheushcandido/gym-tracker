@@ -2,9 +2,9 @@ import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      paddingTop: 20,
+        flex: 1,
+        backgroundColor: '#fff',
+        paddingTop: 20,
     },
     label: {
         width: "90%",
@@ -43,11 +43,25 @@ const styles = StyleSheet.create({
         width: "90%",
         marginTop: 10,
         padding: 10,
-        height: 80,
         borderBottomWidth: 1,
         borderBottomColor: "#F92E6A",
         marginLeft: "auto",
         marginRight: "auto",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    exerciseContent: {
+        flex: 1,
+    },
+    deleteButton: {
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 5,
+    },
+    deleteButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
     modalContainer: {
         flex: 1,
@@ -96,6 +110,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 10,
+    },
+    buttonDelete: {
+        justifyContent: "center",
+        paddingRight: 30,
     },
 });
 

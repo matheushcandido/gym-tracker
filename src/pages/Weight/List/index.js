@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { database } from "../../../config/firebaseconfig";
-import { collection, query, where, onSnapshot, deleteDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format } from "date-fns";
 import styles from "./style";
 
 export default function ListWeight({ navigation }) {
@@ -48,10 +49,22 @@ export default function ListWeight({ navigation }) {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.Weights}>
-                        <Text style={styles.TextWeight} onPress={() => { navigation.navigate("WeightDetails", { id: item.id, weight: item.weight, date: item.date }) }}>{item.weight}</Text>
+                        <Text 
+                            style={styles.TextWeight} 
+                            onPress={() => { 
+                                const date = item.date ? new Date(item.date.seconds * 1000) : new Date();
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                navigation.navigate("WeightDetails", { 
+                                    id: item.id, 
+                                    weight: item.weight, 
+                                    date: formattedDate 
+                                }) 
+                            }}
+                        >
+                            {item.weight}
+                        </Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWeight(item.id)}>
-                            <FontAwesome name="trash" size={23} color="#F92e6A">
-                            </FontAwesome>
+                            <FontAwesome name="trash" size={23} color="#F92e6A" />
                         </TouchableOpacity>
                     </View>
                 )}

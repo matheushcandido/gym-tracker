@@ -31,15 +31,15 @@ export default function CreateWorkout({ navigation }) {
 
     const fetchUserId = async () => {
       try {
-          const userData = await AsyncStorage.getItem('user');
-          if (userData !== null) {
-              const user = JSON.parse(userData);
-              setUserId(user.uid);
-          }
+        const userData = await AsyncStorage.getItem('user');
+        if (userData !== null) {
+          const user = JSON.parse(userData);
+          setUserId(user.uid);
+        }
       } catch (error) {
-          console.error('Error retrieving user data:', error);
+        console.error('Error retrieving user data:', error);
       }
-  };
+    };
 
     fetchUserId();
   }, []);
@@ -55,11 +55,33 @@ export default function CreateWorkout({ navigation }) {
       repetitions: parseInt(repetitions),
       weight: parseFloat(weight),
     }]);
-    
+
     setSelectedExercise("default");
     setRepetitions("");
     setWeight("");
     setModalVisible(false);
+  };
+
+  const deleteExercise = (index) => {
+    Alert.alert(
+      "Confirmação",
+      "Você tem certeza que deseja excluir este exercício?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Excluir",
+          onPress: () => {
+            const updatedExercises = [...exerciseList];
+            updatedExercises.splice(index, 1);
+            setExerciseList(updatedExercises);
+          },
+          style: "destructive"
+        }
+      ]
+    );
   };
 
   const saveWorkout = async () => {
@@ -80,6 +102,19 @@ export default function CreateWorkout({ navigation }) {
     }
   };
 
+  const renderExercise = ({ item, index }) => (
+    <View style={styles.exerciseItem}>
+      <View style={styles.exerciseContent}>
+        <Text>{exercises.find(ex => ex.id === item.exerciseId)?.name}</Text>
+        <Text>Repetições: {item.repetitions}</Text>
+        <Text>Peso: {item.weight}</Text>
+      </View>
+      <TouchableOpacity onPress={() => deleteExercise(index)} style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>Excluir</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Data</Text>
@@ -94,20 +129,15 @@ export default function CreateWorkout({ navigation }) {
       <FlatList
         data={exerciseList}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.exerciseItem}>
-            <Text>{exercises.find(ex => ex.id === item.exerciseId)?.name}</Text>
-            <Text>Repetições: {item.repetitions}</Text>
-            <Text>Peso: {item.weight}</Text>
-          </View>
-        )}
+        renderItem={renderExercise}
       />
 
-      <TouchableOpacity 
-        style={styles.buttonAddExercise} 
+      <TouchableOpacity
+        style={styles.buttonAddExercise}
         onPress={() => {
           setModalVisible(true);
-        }}>
+        }}
+      >
         <Text style={styles.iconAddExercise}>Adicionar exercício</Text>
       </TouchableOpacity>
 
@@ -115,9 +145,9 @@ export default function CreateWorkout({ navigation }) {
         <Text style={styles.iconSave}>Salvar</Text>
       </TouchableOpacity>
 
-      <Modal 
-        visible={modalVisible} 
-        animationType="slide" 
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
         transparent={true}
         onRequestClose={() => {
           setModalVisible(false);

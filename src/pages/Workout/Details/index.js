@@ -53,6 +53,28 @@ export default function DetailsWorkout({ navigation, route }) {
         setModalVisible(false);
     };
 
+    const deleteExercise = (index) => {
+        Alert.alert(
+            "Confirmação",
+            "Você tem certeza que deseja excluir este exercício?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Excluir",
+                    onPress: () => {
+                        const updatedExercises = [...workoutExercises];
+                        updatedExercises.splice(index, 1);
+                        setWorkoutExercises(updatedExercises);
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+
     async function editWorkout(date, exercises, id) {
         try {
             const exerciseDocRef = doc(database, "Workouts", id);
@@ -67,16 +89,21 @@ export default function DetailsWorkout({ navigation, route }) {
     }
 
     const renderExercise = ({ item, index }) => (
-        <TouchableOpacity onPress={() => openEditModal(index)} style={styles.exerciseItem}>
-            <Text>Exercício: {exerciseMap[item.exerciseId]}</Text>
-            <Text>Repetições: {item.repetitions}</Text>
-            <Text>Peso: {item.weight}</Text>
-        </TouchableOpacity>
+        <View style={styles.exerciseItem}>
+            <TouchableOpacity onPress={() => openEditModal(index)} style={styles.exerciseContent}>
+                <Text>Exercício: {exerciseMap[item.exerciseId]}</Text>
+                <Text>Repetições: {item.repetitions}</Text>
+                <Text>Peso: {item.weight}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => deleteExercise(index)} style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>Excluir</Text>
+            </TouchableOpacity>
+        </View>
     );
 
     return (
         <View style={styles.container}>
-                        <Text style={styles.label}>Data</Text>
+            <Text style={styles.label}>Data</Text>
             <TextInput
                 style={styles.inputText}
                 value={format(dateEdit, "dd-MM-yyyy")}
