@@ -5,6 +5,7 @@ import { database } from "../../../config/firebaseconfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import styles from "./style";
+import { format } from "date-fns";  // Importar a função format
 
 export default function ListWorkout({ navigation }) {
     const [workout, setWorkout] = useState([]);
@@ -28,20 +29,12 @@ export default function ListWorkout({ navigation }) {
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const list = [];
                 querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const date = data.date && data.date.seconds ? new Date(data.date.seconds * 1000) : null;
-                    if (date) {
-                        list.push({ ...data, id: doc.id, date });
-                    }
+                    list.push({ ...doc.data(), id: doc.id });
                 });
 
                 list.sort((a, b) => b.date - a.date);
 
-                const formattedList = list.map(item => ({
-                    ...item,
-                    date: item.date.toLocaleDateString()
-                }));
-                setWorkout(formattedList);
+                setWorkout(list);
             });
 
             return () => unsubscribe();

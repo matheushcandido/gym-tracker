@@ -36,7 +36,7 @@ export default function CreateWeight({ navigation }) {
         try {
             await addDoc(collection(database, "Weights"), {
                 weight: weight,
-                date: date,
+                date: format(date, "dd/MM/yyyy"),
                 userId: userId
             });
             navigation.navigate("WeightList");
@@ -59,7 +59,7 @@ export default function CreateWeight({ navigation }) {
             <Text style={styles.label}>Data</Text>
                 <TextInput
                     style={styles.inputText}
-                    value={format(date, "dd-MM-yyyy")}
+                    value={format(date, "dd/MM/yyyy")}
                     editable={false}
             />
             <TouchableOpacity style={styles.buttonNew} onPress={addWeight}>

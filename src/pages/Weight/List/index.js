@@ -31,6 +31,9 @@ export default function ListWeight({ navigation }) {
                 querySnapshot.forEach((doc) => {
                     list.push({ ...doc.data(), id: doc.id });
                 });
+
+                list.sort((a, b) => b.date - a.date);
+
                 setWeight(list);
             });
 
@@ -52,12 +55,10 @@ export default function ListWeight({ navigation }) {
                         <Text 
                             style={styles.TextWeight} 
                             onPress={() => { 
-                                const date = item.date ? new Date(item.date.seconds * 1000) : new Date();
-                                const formattedDate = format(date, 'dd/MM/yyyy');
                                 navigation.navigate("WeightDetails", { 
                                     id: item.id, 
                                     weight: item.weight, 
-                                    date: formattedDate 
+                                    date: item.date 
                                 }) 
                             }}
                         >

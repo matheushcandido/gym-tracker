@@ -6,6 +6,7 @@ import { database } from "../../../config/firebaseconfig";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import styles from "../Create/style";
 import { format } from "date-fns";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateWorkout({ navigation }) {
   const [exercises, setExercises] = useState([]);
@@ -16,6 +17,7 @@ export default function CreateWorkout({ navigation }) {
   const [userId, setUserId] = useState(null);
   const [exerciseList, setExerciseList] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -93,7 +95,7 @@ export default function CreateWorkout({ navigation }) {
     try {
       await addDoc(collection(database, "Workouts"), {
         exercises: exerciseList,
-        date: date,
+        date: format(date, "dd/MM/yyyy"),
         userId: userId
       });
       navigation.navigate("WorkoutList");
@@ -118,11 +120,25 @@ export default function CreateWorkout({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Data</Text>
-      <TextInput
-        style={styles.inputText}
-        value={format(date, "dd-MM-yyyy")}
-        editable={false}
-      />
+      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        <TextInput
+          style={styles.inputText}
+          value={format(date, "dd/MM/yyyy")}
+          editable={false}
+        />
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={date}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            const currentDate = selectedDate || date;
+            setShowDatePicker(false);
+            setDate(currentDate);
+          }}
+        />
+      )}
 
       <Text style={styles.label}>Lista de Exercícios:</Text>
 

@@ -48,7 +48,8 @@ export default function ListExercise({ navigation }) {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.Exercises}>
-                        <Text style={styles.DescriptionExercise} onPress={() => { navigation.navigate("ExerciseDetails", { id: item.id, name: item.name }) }}>{item.name}</Text>
+                        <Text style={styles.DescriptionExercise} onPress={() => 
+                            { navigation.navigate("ExerciseDetails", { id: item.id, name: item.name, category: item.category }) }}>{item.name}</Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteExercise(item.id)}>
                             <FontAwesome name="trash" size={23} color="#F92e6A">
                             </FontAwesome>

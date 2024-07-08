@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, Modal } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { database } from "../../../config/firebaseconfig";
 import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
-import { format, parse } from "date-fns";
 import styles from "./style";
 
 export default function DetailsWorkout({ navigation, route }) {
     const [exercises, setExercises] = useState([]);
     const [exerciseMap, setExerciseMap] = useState({});
-    const [dateEdit, setDateEdit] = useState(parse(route.params.date, 'dd/MM/yyyy', new Date()));
+    const [dateEdit, setDateEdit] = useState(route.params.date);
     const [workoutExercises, setWorkoutExercises] = useState(route.params.exercises);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedExerciseIndex, setSelectedExerciseIndex] = useState(null);
@@ -106,7 +104,7 @@ export default function DetailsWorkout({ navigation, route }) {
             <Text style={styles.label}>Data</Text>
             <TextInput
                 style={styles.inputText}
-                value={format(dateEdit, "dd-MM-yyyy")}
+                value={dateEdit}
                 editable={false}
             />
 

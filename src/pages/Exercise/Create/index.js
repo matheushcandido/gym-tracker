@@ -4,9 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { database } from "../../../config/firebaseconfig";
 import { collection, addDoc } from "firebase/firestore";
 import styles from "../Create/style";
+import { Picker } from "@react-native-picker/picker";
 
 export default function CreateExercise({ navigation }) {
     const [name, setName] = useState(null);
+    const [category, setCategory] = useState("peito");
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -34,7 +36,8 @@ export default function CreateExercise({ navigation }) {
         try {
             await addDoc(collection(database, "Exercises"), {
                 name: name,
-                userId: userId
+                userId: userId,
+                category: category
             });
             navigation.navigate("ExerciseList");
         } catch (error) {
@@ -51,6 +54,22 @@ export default function CreateExercise({ navigation }) {
                 onChangeText={setName}
                 value={name}
             />
+
+            <Text style={styles.label}>Categoria</Text>
+            <Picker
+                selectedValue={category}
+                style={styles.inputText}
+                onValueChange={(itemValue) => setCategory(itemValue)}
+            >
+                <Picker.Item label="Peito" value="peito" />
+                <Picker.Item label="Costas" value="costas" />
+                <Picker.Item label="Pernas" value="pernas" />
+                <Picker.Item label="Ombros" value="ombros" />
+                <Picker.Item label="Bíceps" value="biceps" />
+                <Picker.Item label="Tríceps" value="triceps" />
+                <Picker.Item label="Abdômen" value="abdomen" />
+                <Picker.Item label="Panturrilha" value="panturrilha" />
+            </Picker>
             <TouchableOpacity style={styles.buttonNew} onPress={addExercise}>
                 <Text style={styles.iconSave}>Salvar</Text>
             </TouchableOpacity>
