@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, Modal, FlatList } from 
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { database } from "../../../config/firebaseconfig";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import styles from "../Create/style";
 import { format } from "date-fns";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -18,10 +18,18 @@ export default function CreateWorkout({ navigation }) {
   const [exerciseList, setExerciseList] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [category, setCategory] = useState("peito");
 
   useEffect(() => {
     const fetchExercises = async () => {
-      const querySnapshot = await getDocs(collection(database, "Exercises"));
+      if (!userId || !category) return;
+
+      const q = query(
+        collection(database, "Exercises"),
+        where("userId", "==", userId),
+        where("category", "==", category)
+      );
+      const querySnapshot = await getDocs(q);
       const exerciseList = [];
       querySnapshot.forEach((doc) => {
         exerciseList.push({ id: doc.id, name: doc.data().name });
@@ -30,7 +38,9 @@ export default function CreateWorkout({ navigation }) {
     };
 
     fetchExercises();
+  }, [userId, category]);
 
+  useEffect(() => {
     const fetchUserId = async () => {
       try {
         const userData = await AsyncStorage.getItem('user');
@@ -96,7 +106,8 @@ export default function CreateWorkout({ navigation }) {
       await addDoc(collection(database, "Workouts"), {
         exercises: exerciseList,
         date: format(date, "dd/MM/yyyy"),
-        userId: userId
+        userId: userId,
+        category: category
       });
       navigation.navigate("WorkoutList");
     } catch (error) {
@@ -140,12 +151,29 @@ export default function CreateWorkout({ navigation }) {
         />
       )}
 
+      <Text style={styles.label}>Categoria</Text>
+      <Picker
+        selectedValue={category}
+        style={styles.inputText}
+        onValueChange={(itemValue) => setCategory(itemValue)}
+      >
+        <Picker.Item label="Peito" value="peito" />
+        <Picker.Item label="Costas" value="costas" />
+        <Picker.Item label="Pernas" value="pernas" />
+        <Picker.Item label="Ombros" value="ombros" />
+        <Picker.Item label="Bíceps" value="biceps" />
+        <Picker.Item label="Tríceps" value="triceps" />
+        <Picker.Item label="Abdômen" value="abdomen" />
+        <Picker.Item label="Panturrilha" value="panturrilha" />
+      </Picker>
+
       <Text style={styles.label}>Lista de Exercícios:</Text>
 
       <FlatList
         data={exerciseList}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderExercise}
+        contentContainerStyle={{ paddingBottom: 120 }}
       />
 
       <TouchableOpacity

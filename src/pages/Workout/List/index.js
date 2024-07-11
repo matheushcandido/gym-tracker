@@ -58,7 +58,7 @@ export default function ListWorkout({ navigation }) {
                             date: item.date,
                             exercises: item.exercises
                         }) }}
-                        >{item.date}</Text>
+                        >Treino do dia {item.date}</Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWorkout(item.id)}>
                             <FontAwesome name="trash" size={23} color="#F92e6A">
                             </FontAwesome>

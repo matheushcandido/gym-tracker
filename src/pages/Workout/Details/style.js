@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 20,
+        paddingBottom: 100,
     },
     label: {
         width: "90%",
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: 15,
         fontWeight: "bold",
+        textAlign: "center",
     },
 });
 

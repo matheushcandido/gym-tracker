@@ -14,6 +14,7 @@ export default function DetailsWorkout({ navigation, route }) {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [workoutExercises, setWorkoutExercises] = useState(route.params.exercises);
     const [modalVisible, setModalVisible] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [selectedExerciseIndex, setSelectedExerciseIndex] = useState(null);
     const [repetitionsEdit, setRepetitionsEdit] = useState("");
     const [weightEdit, setWeightEdit] = useState("");
@@ -42,8 +43,10 @@ export default function DetailsWorkout({ navigation, route }) {
     const openEditModal = (index) => {
         const exercise = workoutExercises[index];
         setSelectedExerciseIndex(index);
+        setSelectedExercise(exercise.exerciseId);
         setRepetitionsEdit(exercise.repetitions.toString());
         setWeightEdit(exercise.weight.toString());
+        setIsEditing(true);
         setModalVisible(true);
     };
 
@@ -55,7 +58,7 @@ export default function DetailsWorkout({ navigation, route }) {
             weight: parseFloat(weightEdit)
         };
         setWorkoutExercises(updatedExercises);
-        setModalVisible(false);
+        resetModal();
     };
 
     const deleteExercise = (index) => {
@@ -92,9 +95,17 @@ export default function DetailsWorkout({ navigation, route }) {
             weight: parseFloat(weight),
         }]);
 
+        resetModal();
+    };
+
+    const resetModal = () => {
         setSelectedExercise("default");
         setRepetitions("");
         setWeight("");
+        setRepetitionsEdit("");
+        setWeightEdit("");
+        setSelectedExerciseIndex(null);
+        setIsEditing(false);
         setModalVisible(false);
     };
 
@@ -154,6 +165,7 @@ export default function DetailsWorkout({ navigation, route }) {
                 data={workoutExercises}
                 renderItem={renderExercise}
                 keyExtractor={(item, index) => index.toString()}
+                contentContainerStyle={{ paddingBottom: 120 }}
             />
 
             <TouchableOpacity
@@ -173,15 +185,18 @@ export default function DetailsWorkout({ navigation, route }) {
                 visible={modalVisible}
                 animationType="slide"
                 transparent={true}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => resetModal()}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.label}>Exercício</Text>
                         <Picker
-                            selectedValue={selectedExercise}
+                            selectedValue={isEditing ? selectedExercise : selectedExercise}
                             style={styles.inputText}
-                            onValueChange={(itemValue) => setSelectedExercise(itemValue)}
+                            onValueChange={(itemValue) => {
+                                isEditing ? setSelectedExercise(itemValue) : setSelectedExercise(itemValue)
+                            }}
+                            enabled={!isEditing}
                         >
                             <Picker.Item label="Selecione um exercício" value="default" />
                             {exercises.map((exercise) => (
@@ -194,8 +209,8 @@ export default function DetailsWorkout({ navigation, route }) {
                             style={styles.inputText}
                             placeholder="Exemplo: 10"
                             keyboardType="numeric"
-                            onChangeText={setRepetitions}
-                            value={repetitions}
+                            onChangeText={isEditing ? setRepetitionsEdit : setRepetitions}
+                            value={isEditing ? repetitionsEdit : repetitions}
                         />
 
                         <Text style={styles.label}>Peso</Text>
@@ -203,16 +218,22 @@ export default function DetailsWorkout({ navigation, route }) {
                             style={styles.inputText}
                             placeholder="Exemplo: 50.5"
                             keyboardType="numeric"
-                            onChangeText={setWeight}
-                            value={weight}
+                            onChangeText={isEditing ? setWeightEdit : setWeight}
+                            value={isEditing ? weightEdit : weight}
                         />
 
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.buttonConfirmAddExercise} onPress={addExerciseToList}>
-                                <Text style={styles.iconConfirmAddExercise}>Adicionar</Text>
-                            </TouchableOpacity>
+                            {isEditing ? (
+                                <TouchableOpacity style={styles.buttonConfirmAddExercise} onPress={editExerciseInList}>
+                                    <Text style={styles.iconConfirmAddExercise}>Salvar</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity style={styles.buttonConfirmAddExercise} onPress={addExerciseToList}>
+                                    <Text style={styles.iconConfirmAddExercise}>Adicionar</Text>
+                                </TouchableOpacity>
+                            )}
 
-                            <TouchableOpacity style={styles.buttonCancel} onPress={() => setModalVisible(false)}>
+                            <TouchableOpacity style={styles.buttonCancel} onPress={() => resetModal()}>
                                 <Text style={styles.iconCancel}>Cancelar</Text>
                             </TouchableOpacity>
                         </View>
