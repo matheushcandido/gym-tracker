@@ -5,11 +5,13 @@ import { database } from "../../../config/firebaseconfig";
 import { collection, addDoc } from "firebase/firestore";
 import styles from "./style";
 import { format } from "date-fns";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateWeight({ navigation }) {
     const [weight, setWeight] = useState(null);
     const [date, setDate] = useState(new Date());
     const [userId, setUserId] = useState(null);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
     useEffect(() => {
         const fetchUserId = async () => {
@@ -57,11 +59,25 @@ export default function CreateWeight({ navigation }) {
             />
 
             <Text style={styles.label}>Data</Text>
-                <TextInput
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <TextInput
                     style={styles.inputText}
                     value={format(date, "dd/MM/yyyy")}
                     editable={false}
-            />
+                    />
+                </TouchableOpacity>
+                {showDatePicker && (
+                    <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                        const currentDate = selectedDate || date;
+                        setShowDatePicker(false);
+                        setDate(currentDate);
+                    }}
+                    />
+                )}
             <TouchableOpacity style={styles.buttonNew} onPress={addWeight}>
                 <Text style={styles.iconSave}>Salvar</Text>
             </TouchableOpacity>

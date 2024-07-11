@@ -115,6 +115,24 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingRight: 30,
     },
+    buttonAddExercise: {
+        width: 80,
+        height: 80,
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+        backgroundColor: "#000000",
+        borderRadius: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        borderWidth: 2,
+        borderColor: "#F92e6a",
+    },
+    iconAddExercise: {
+        color: "#ffffff",
+        fontSize: 15,
+        fontWeight: "bold",
+    },
 });
 
 export default styles;

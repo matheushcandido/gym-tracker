@@ -2,17 +2,24 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, Modal } from "react-native";
 import { database } from "../../../config/firebaseconfig";
 import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
+import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { format, parse } from 'date-fns';
 import styles from "./style";
 
 export default function DetailsWorkout({ navigation, route }) {
     const [exercises, setExercises] = useState([]);
     const [exerciseMap, setExerciseMap] = useState({});
     const [dateEdit, setDateEdit] = useState(route.params.date);
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [workoutExercises, setWorkoutExercises] = useState(route.params.exercises);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedExerciseIndex, setSelectedExerciseIndex] = useState(null);
     const [repetitionsEdit, setRepetitionsEdit] = useState("");
     const [weightEdit, setWeightEdit] = useState("");
+    const [selectedExercise, setSelectedExercise] = useState("default");
+    const [repetitions, setRepetitions] = useState("");
+    const [weight, setWeight] = useState("");
     const idExercise = route.params.id;
 
     useEffect(() => {
@@ -73,6 +80,24 @@ export default function DetailsWorkout({ navigation, route }) {
         );
     };
 
+    const addExerciseToList = () => {
+        if (!selectedExercise || selectedExercise === "default" || !repetitions || !weight) {
+            Alert.alert("Erro", "Por favor, preencha todos os campos do exercício");
+            return;
+        }
+
+        setWorkoutExercises([...workoutExercises, {
+            exerciseId: selectedExercise,
+            repetitions: parseInt(repetitions),
+            weight: parseFloat(weight),
+        }]);
+
+        setSelectedExercise("default");
+        setRepetitions("");
+        setWeight("");
+        setModalVisible(false);
+    };
+
     async function editWorkout(date, exercises, id) {
         try {
             const exerciseDocRef = doc(database, "Workouts", id);
@@ -102,11 +127,27 @@ export default function DetailsWorkout({ navigation, route }) {
     return (
         <View style={styles.container}>
             <Text style={styles.label}>Data</Text>
-            <TextInput
-                style={styles.inputText}
-                value={dateEdit}
-                editable={false}
-            />
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                <TextInput
+                    style={styles.inputText}
+                    value={dateEdit}
+                    editable={false}
+                />
+            </TouchableOpacity>
+            {showDatePicker && (
+                <DateTimePicker
+                    value={parse(dateEdit, "dd/MM/yyyy", new Date())}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                        if (selectedDate) {
+                            const formattedDate = format(selectedDate, "dd/MM/yyyy");
+                            setDateEdit(formattedDate);
+                        }
+                        setShowDatePicker(false);
+                    }}
+                />
+            )}
 
             <Text style={styles.label}>Exercícios</Text>
             <FlatList
@@ -114,6 +155,15 @@ export default function DetailsWorkout({ navigation, route }) {
                 renderItem={renderExercise}
                 keyExtractor={(item, index) => index.toString()}
             />
+
+            <TouchableOpacity
+                style={styles.buttonAddExercise}
+                onPress={() => {
+                    setModalVisible(true);
+                }}
+            >
+                <Text style={styles.iconAddExercise}>Adicionar exercício</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.buttonNew} onPress={() => {editWorkout(dateEdit, workoutExercises, idExercise)}}>
                 <Text style={styles.iconSave}>Salvar</Text>
@@ -127,13 +177,25 @@ export default function DetailsWorkout({ navigation, route }) {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
+                        <Text style={styles.label}>Exercício</Text>
+                        <Picker
+                            selectedValue={selectedExercise}
+                            style={styles.inputText}
+                            onValueChange={(itemValue) => setSelectedExercise(itemValue)}
+                        >
+                            <Picker.Item label="Selecione um exercício" value="default" />
+                            {exercises.map((exercise) => (
+                                <Picker.Item key={exercise.id} label={exercise.name} value={exercise.id} />
+                            ))}
+                        </Picker>
+
                         <Text style={styles.label}>Quantidade de Repetições</Text>
                         <TextInput
                             style={styles.inputText}
                             placeholder="Exemplo: 10"
                             keyboardType="numeric"
-                            onChangeText={setRepetitionsEdit}
-                            value={repetitionsEdit}
+                            onChangeText={setRepetitions}
+                            value={repetitions}
                         />
 
                         <Text style={styles.label}>Peso</Text>
@@ -141,13 +203,13 @@ export default function DetailsWorkout({ navigation, route }) {
                             style={styles.inputText}
                             placeholder="Exemplo: 50.5"
                             keyboardType="numeric"
-                            onChangeText={setWeightEdit}
-                            value={weightEdit}
+                            onChangeText={setWeight}
+                            value={weight}
                         />
 
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.buttonConfirmAddExercise} onPress={editExerciseInList}>
-                                <Text style={styles.iconConfirmAddExercise}>Salvar</Text>
+                            <TouchableOpacity style={styles.buttonConfirmAddExercise} onPress={addExerciseToList}>
+                                <Text style={styles.iconConfirmAddExercise}>Adicionar</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.buttonCancel} onPress={() => setModalVisible(false)}>
