@@ -21,7 +21,19 @@ export default function DetailsWorkout({ navigation, route }) {
     const [selectedExercise, setSelectedExercise] = useState("default");
     const [repetitions, setRepetitions] = useState("");
     const [weight, setWeight] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState(route.params.categories);
     const idExercise = route.params.id;
+
+    const categories = [
+        { id: "peito", name: "Peito" },
+        { id: "costas", name: "Costas" },
+        { id: "pernas", name: "Pernas" },
+        { id: "ombros", name: "Ombros" },
+        { id: "biceps", name: "Bíceps" },
+        { id: "triceps", name: "Tríceps" },
+        { id: "abdomen", name: "Abdômen" },
+        { id: "panturrilha", name: "Panturrilha" },
+      ];
 
     useEffect(() => {
         const fetchExercises = async () => {

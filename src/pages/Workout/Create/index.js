@@ -7,6 +7,7 @@ import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import styles from "../Create/style";
 import { format } from "date-fns";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import MultiSelect from "react-native-multiple-select";
 
 export default function CreateWorkout({ navigation }) {
   const [exercises, setExercises] = useState([]);
@@ -18,17 +19,29 @@ export default function CreateWorkout({ navigation }) {
   const [exerciseList, setExerciseList] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [category, setCategory] = useState("peito");
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const categories = [
+    { id: "peito", name: "Peito" },
+    { id: "costas", name: "Costas" },
+    { id: "pernas", name: "Pernas" },
+    { id: "ombros", name: "Ombros" },
+    { id: "biceps", name: "Bíceps" },
+    { id: "triceps", name: "Tríceps" },
+    { id: "abdomen", name: "Abdômen" },
+    { id: "panturrilha", name: "Panturrilha" },
+  ];
 
   useEffect(() => {
     const fetchExercises = async () => {
-      if (!userId || !category) return;
-
+      if (!userId || selectedCategories.length === 0) return;
+  
       const q = query(
         collection(database, "Exercises"),
         where("userId", "==", userId),
-        where("category", "==", category)
+        where("category", "in", selectedCategories)
       );
+  
       const querySnapshot = await getDocs(q);
       const exerciseList = [];
       querySnapshot.forEach((doc) => {
@@ -36,9 +49,9 @@ export default function CreateWorkout({ navigation }) {
       });
       setExercises(exerciseList);
     };
-
+  
     fetchExercises();
-  }, [userId, category]);
+  }, [userId, selectedCategories]);  
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -107,7 +120,7 @@ export default function CreateWorkout({ navigation }) {
         exercises: exerciseList,
         date: format(date, "dd/MM/yyyy"),
         userId: userId,
-        category: category
+        categories: selectedCategories
       });
       navigation.navigate("WorkoutList");
     } catch (error) {
@@ -151,21 +164,28 @@ export default function CreateWorkout({ navigation }) {
         />
       )}
 
-      <Text style={styles.label}>Categoria</Text>
-      <Picker
-        selectedValue={category}
-        style={styles.inputText}
-        onValueChange={(itemValue) => setCategory(itemValue)}
-      >
-        <Picker.Item label="Peito" value="peito" />
-        <Picker.Item label="Costas" value="costas" />
-        <Picker.Item label="Pernas" value="pernas" />
-        <Picker.Item label="Ombros" value="ombros" />
-        <Picker.Item label="Bíceps" value="biceps" />
-        <Picker.Item label="Tríceps" value="triceps" />
-        <Picker.Item label="Abdômen" value="abdomen" />
-        <Picker.Item label="Panturrilha" value="panturrilha" />
-      </Picker>
+      <Text style={styles.label}>Categorias</Text>
+      <View style={styles.multiSelectContainer}>
+        <MultiSelect
+          items={categories}
+          uniqueKey="id"
+          onSelectedItemsChange={setSelectedCategories}
+          selectedItems={selectedCategories}
+          selectText="Escolha Categorias"
+          searchInputPlaceholderText="Procurar Categorias..."
+          tagRemoveIconColor="#F92E6A"
+          tagBorderColor="#F92E6A"
+          tagTextColor="#F92E6A"
+          selectedItemTextColor="#F92E6A"
+          selectedItemIconColor="#F92E6A"
+          itemTextColor="#000"
+          displayKey="name"
+          searchInputStyle={{ color: "#F92E6A" }}
+          submitButtonColor="#F92E6A"
+          submitButtonText="Selecionar"
+          styleDropdownMenuSubsection={styles.multiSelectDropdown}
+        />
+      </View>
 
       <Text style={styles.label}>Lista de Exercícios:</Text>
 

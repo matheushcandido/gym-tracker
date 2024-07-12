@@ -5,7 +5,6 @@ import { database } from "../../../config/firebaseconfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import styles from "./style";
-import { format } from "date-fns";  // Importar a função format
 
 export default function ListWorkout({ navigation }) {
     const [workout, setWorkout] = useState([]);
@@ -56,7 +55,8 @@ export default function ListWorkout({ navigation }) {
                         onPress={() => { navigation.navigate("WorkoutDetails", {
                             id: item.id,
                             date: item.date,
-                            exercises: item.exercises
+                            exercises: item.exercises,
+                            categories: item.categories
                         }) }}
                         >Treino do dia {item.date}</Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWorkout(item.id)}>

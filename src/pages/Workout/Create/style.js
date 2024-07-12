@@ -130,6 +130,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginTop: 10,
     },
+    multiSelectContainer: {
+        width: '90%',
+        paddingTop: 10,
+        alignSelf: 'center',
+      },
+      multiSelectDropdown: {
+        width: '100%',
+      },
 });
 
 export default styles;
