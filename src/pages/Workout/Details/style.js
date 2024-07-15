@@ -135,6 +135,14 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
     },
+    multiSelectContainer: {
+        width: '90%',
+        paddingTop: 10,
+        alignSelf: 'center',
+      },
+      multiSelectDropdown: {
+        width: '100%',
+      },
 });
 
 export default styles;

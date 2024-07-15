@@ -51,17 +51,21 @@ export default function ListWorkout({ navigation }) {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.Workouts}>
-                        <Text style={styles.WorkoutDate}
-                        onPress={() => { navigation.navigate("WorkoutDetails", {
-                            id: item.id,
-                            date: item.date,
-                            exercises: item.exercises,
-                            categories: item.categories
-                        }) }}
-                        >Treino do dia {item.date}</Text>
+                        <Text 
+                            style={styles.WorkoutDate}
+                            onPress={() => { 
+                                navigation.navigate("WorkoutDetails", {
+                                    id: item.id,
+                                    date: item.date,
+                                    exercises: item.exercises,
+                                    categories: item.categories
+                                }) 
+                            }}
+                        >
+                            Treino de: {Array.isArray(item.categories) ? item.categories.join(', ') : ''} do dia {item.date}
+                        </Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWorkout(item.id)}>
-                            <FontAwesome name="trash" size={23} color="#F92e6A">
-                            </FontAwesome>
+                            <FontAwesome name="trash" size={23} color="#F92e6A" />
                         </TouchableOpacity>
                     </View>
                 )}

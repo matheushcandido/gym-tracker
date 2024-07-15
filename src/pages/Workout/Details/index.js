@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, Modal } from "react-native";
 import { database } from "../../../config/firebaseconfig";
-import { collection, doc, updateDoc, getDocs } from "firebase/firestore";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { collection, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { Picker } from "@react-native-picker/picker";
+import MultiSelect from "react-native-multiple-select";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format, parse } from 'date-fns';
 import styles from "./style";
@@ -12,6 +14,7 @@ export default function DetailsWorkout({ navigation, route }) {
     const [exerciseMap, setExerciseMap] = useState({});
     const [dateEdit, setDateEdit] = useState(route.params.date);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [userId, setUserId] = useState(null);
     const [workoutExercises, setWorkoutExercises] = useState(route.params.exercises);
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -33,23 +36,56 @@ export default function DetailsWorkout({ navigation, route }) {
         { id: "triceps", name: "Tríceps" },
         { id: "abdomen", name: "Abdômen" },
         { id: "panturrilha", name: "Panturrilha" },
-      ];
+    ];
 
     useEffect(() => {
         const fetchExercises = async () => {
-            const querySnapshot = await getDocs(collection(database, "Exercises"));
-            const exerciseList = [];
-            const exerciseMapping = {};
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                exerciseList.push({ id: doc.id, name: data.name });
-                exerciseMapping[doc.id] = data.name;
-            });
-            setExercises(exerciseList);
-            setExerciseMap(exerciseMapping);
+            if (!userId) return;
+
+            let q;
+            if (selectedCategories.length > 0) {
+                q = query(
+                    collection(database, "Exercises"),
+                    where("userId", "==", userId),
+                    where("category", "in", selectedCategories)
+                );
+            } else {
+                q = collection(database, "Exercises");
+            }
+
+            try {
+                const querySnapshot = await getDocs(q);
+                const exerciseList = [];
+                const exerciseMapping = {};
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    exerciseList.push({ id: doc.id, name: data.name });
+                    exerciseMapping[doc.id] = data.name;
+                });
+                setExercises(exerciseList);
+                setExerciseMap(exerciseMapping);
+            } catch (error) {
+                console.error("Error fetching exercises: ", error);
+            }
         };
 
         fetchExercises();
+    }, [userId, selectedCategories]);
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+          try {
+            const userData = await AsyncStorage.getItem('user');
+            if (userData !== null) {
+              const user = JSON.parse(userData);
+              setUserId(user.uid);
+            }
+          } catch (error) {
+            console.error('Error retrieving user data:', error);
+          }
+        };
+    
+        fetchUserId();
     }, []);
 
     const openEditModal = (index) => {
@@ -126,7 +162,8 @@ export default function DetailsWorkout({ navigation, route }) {
             const exerciseDocRef = doc(database, "Workouts", id);
             await updateDoc(exerciseDocRef, {
                 date: date,
-                exercises: exercises
+                exercises: exercises,
+                categories: selectedCategories
             });
             navigation.navigate("WorkoutList");
         } catch (error) {
@@ -171,6 +208,30 @@ export default function DetailsWorkout({ navigation, route }) {
                     }}
                 />
             )}
+
+            <Text style={styles.label}>Categorias</Text>
+            <View style={styles.multiSelectContainer}>
+                <MultiSelect
+                    items={categories}
+                    uniqueKey="id"
+                    onSelectedItemsChange={setSelectedCategories}
+                    selectedItems={selectedCategories}
+                    selectText="Escolha Categorias"
+                    searchInputPlaceholderText="Procurar Categorias..."
+                    tagRemoveIconColor="#F92E6A"
+                    tagBorderColor="#F92E6A"
+                    tagTextColor="#F92E6A"
+                    selectedItemTextColor="#F92E6A"
+                    selectedItemIconColor="#F92E6A"
+                    itemTextColor="#000"
+                    displayKey="name"
+                    searchInputStyle={{ color: "#F92E6A" }}
+                    submitButtonColor="#F92E6A"
+                    submitButtonText="Selecionar"
+                    styleDropdownMenuSubsection={styles.multiSelectDropdown}
+                    style={styles.multiSelectContainer}
+                />
+            </View>
 
             <Text style={styles.label}>Exercícios</Text>
             <FlatList
