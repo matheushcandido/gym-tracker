@@ -62,7 +62,7 @@ export default function ListWorkout({ navigation }) {
                                 }) 
                             }}
                         >
-                            Treino de: {Array.isArray(item.categories) ? item.categories.join(', ') : ''} do dia {item.date}
+                            Treino de: <Text style={styles.boldWords}>{Array.isArray(item.categories) ? item.categories.join(', ').toUpperCase() : ''}</Text> do dia <Text style={styles.boldWords}>{item.date}</Text>
                         </Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWorkout(item.id)}>
                             <FontAwesome name="trash" size={23} color="#F92e6A" />

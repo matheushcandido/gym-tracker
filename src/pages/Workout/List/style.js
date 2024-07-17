@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: 25,
         fontWeight: "bold",
+    },
+    boldWords:{
+        fontWeight: "bold"
     }
 });
 
