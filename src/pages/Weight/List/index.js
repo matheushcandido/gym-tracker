@@ -62,7 +62,7 @@ export default function ListWeight({ navigation }) {
                                 }) 
                             }}
                         >
-                           Pesagem do dia {item.date}: {item.weight} kgs
+                           Pesagem do dia <Text style={styles.boldWords}>{item.date}: {item.weight} kgs</Text>
                         </Text>
                         <TouchableOpacity style={styles.buttonDelete} onPress={() => deleteWeight(item.id)}>
                             <FontAwesome name="trash" size={23} color="#F92e6A" />

@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
       paddingTop: 20,
+      paddingBottom: 90
     },
     Workouts: {
         width: "100%",

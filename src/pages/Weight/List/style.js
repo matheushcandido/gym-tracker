@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
       paddingTop: 20,
+      paddingBottom: 90
     },
     Weights: {
         width: "100%",
@@ -42,6 +43,9 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: 25,
         fontWeight: "bold",
+    },
+    boldWords: {
+        fontWeight: "bold"
     }
 });
 

@@ -12,7 +12,7 @@ import MultiSelect from "react-native-multiple-select";
 export default function CreateWorkout({ navigation }) {
   const [exercises, setExercises] = useState([]);
   const [selectedExercise, setSelectedExercise] = useState("default");
-  const [repetitions, setRepetitions] = useState("");
+  const [series, setSeries] = useState("");
   const [weight, setWeight] = useState("");
   const [date, setDate] = useState(new Date());
   const [userId, setUserId] = useState(null);
@@ -70,19 +70,19 @@ export default function CreateWorkout({ navigation }) {
   }, []);
 
   const addExerciseToList = () => {
-    if (!selectedExercise || selectedExercise === "default" || !repetitions || !weight) {
+    if (!selectedExercise || selectedExercise === "default" || !series || !weight) {
       Alert.alert("Erro", "Por favor, preencha todos os campos do exercício");
       return;
     }
 
     setExerciseList([...exerciseList, {
       exerciseId: selectedExercise,
-      repetitions: parseInt(repetitions),
+      series: parseInt(series),
       weight: parseFloat(weight),
     }]);
 
     setSelectedExercise("default");
-    setRepetitions("");
+    setSeries("");
     setWeight("");
     setModalVisible(false);
   };
@@ -132,7 +132,7 @@ export default function CreateWorkout({ navigation }) {
     <View style={styles.exerciseItem}>
       <View style={styles.exerciseContent}>
         <Text>{exercises.find(ex => ex.id === item.exerciseId)?.name}</Text>
-        <Text>Repetições: {item.repetitions}</Text>
+        <Text>Séries válidas: {item.series}</Text>
         <Text>Peso: {item.weight}</Text>
       </View>
       <TouchableOpacity onPress={() => deleteExercise(index)} style={styles.deleteButton}>
@@ -231,13 +231,13 @@ export default function CreateWorkout({ navigation }) {
               ))}
             </Picker>
 
-            <Text style={styles.label}>Quantidade de Repetições</Text>
+            <Text style={styles.label}>Quantidade de Séries</Text>
             <TextInput
               style={styles.inputText}
               placeholder="Exemplo: 10"
               keyboardType="numeric"
-              onChangeText={setRepetitions}
-              value={repetitions}
+              onChangeText={setSeries}
+              value={series}
             />
 
             <Text style={styles.label}>Peso</Text>

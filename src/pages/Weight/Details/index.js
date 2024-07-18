@@ -30,7 +30,7 @@ export default function DetailsWeight({ navigation, route }) {
             <Text style={styles.label}>Seu peso</Text>
             <TextInput 
                 style={styles.inputText}
-                placeholder="Exemplo: 80kgs"
+                placeholder="Exemplo: 80"
                 keyboardType="numeric"
                 onChangeText={setWeightEdit}
                 value={weightEdit}

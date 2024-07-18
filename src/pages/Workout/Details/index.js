@@ -19,10 +19,10 @@ export default function DetailsWorkout({ navigation, route }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [selectedExerciseIndex, setSelectedExerciseIndex] = useState(null);
-    const [repetitionsEdit, setRepetitionsEdit] = useState("");
+    const [seriesEdit, setSeriesEdit] = useState("");
     const [weightEdit, setWeightEdit] = useState("");
     const [selectedExercise, setSelectedExercise] = useState("default");
-    const [repetitions, setRepetitions] = useState("");
+    const [series, setSeries] = useState("");
     const [weight, setWeight] = useState("");
     const [selectedCategories, setSelectedCategories] = useState(route.params.categories);
     const idExercise = route.params.id;
@@ -92,7 +92,7 @@ export default function DetailsWorkout({ navigation, route }) {
         const exercise = workoutExercises[index];
         setSelectedExerciseIndex(index);
         setSelectedExercise(exercise.exerciseId);
-        setRepetitionsEdit(exercise.repetitions.toString());
+        setSeriesEdit(exercise.series.toString());
         setWeightEdit(exercise.weight.toString());
         setIsEditing(true);
         setModalVisible(true);
@@ -102,7 +102,7 @@ export default function DetailsWorkout({ navigation, route }) {
         const updatedExercises = [...workoutExercises];
         updatedExercises[selectedExerciseIndex] = {
             ...updatedExercises[selectedExerciseIndex],
-            repetitions: parseInt(repetitionsEdit),
+            series: parseInt(seriesEdit),
             weight: parseFloat(weightEdit)
         };
         setWorkoutExercises(updatedExercises);
@@ -132,14 +132,14 @@ export default function DetailsWorkout({ navigation, route }) {
     };
 
     const addExerciseToList = () => {
-        if (!selectedExercise || selectedExercise === "default" || !repetitions || !weight) {
+        if (!selectedExercise || selectedExercise === "default" || !series || !weight) {
             Alert.alert("Erro", "Por favor, preencha todos os campos do exercício");
             return;
         }
 
         setWorkoutExercises([...workoutExercises, {
             exerciseId: selectedExercise,
-            repetitions: parseInt(repetitions),
+            series: parseInt(series),
             weight: parseFloat(weight),
         }]);
 
@@ -148,9 +148,9 @@ export default function DetailsWorkout({ navigation, route }) {
 
     const resetModal = () => {
         setSelectedExercise("default");
-        setRepetitions("");
+        setSeries("");
         setWeight("");
-        setRepetitionsEdit("");
+        setSeriesEdit("");
         setWeightEdit("");
         setSelectedExerciseIndex(null);
         setIsEditing(false);
@@ -175,7 +175,7 @@ export default function DetailsWorkout({ navigation, route }) {
         <View style={styles.exerciseItem}>
             <TouchableOpacity onPress={() => openEditModal(index)} style={styles.exerciseContent}>
                 <Text>Exercício: {exerciseMap[item.exerciseId]}</Text>
-                <Text>Repetições: {item.repetitions}</Text>
+                <Text>Séries válidas: {item.series}</Text>
                 <Text>Peso: {item.weight}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteExercise(index)} style={styles.deleteButton}>
@@ -277,13 +277,13 @@ export default function DetailsWorkout({ navigation, route }) {
                             ))}
                         </Picker>
 
-                        <Text style={styles.label}>Quantidade de Repetições</Text>
+                        <Text style={styles.label}>Quantidade de Séries</Text>
                         <TextInput
                             style={styles.inputText}
                             placeholder="Exemplo: 10"
                             keyboardType="numeric"
-                            onChangeText={isEditing ? setRepetitionsEdit : setRepetitions}
-                            value={isEditing ? repetitionsEdit : repetitions}
+                            onChangeText={isEditing ? setSeriesEdit : setSeries}
+                            value={isEditing ? seriesEdit : series}
                         />
 
                         <Text style={styles.label}>Peso</Text>
