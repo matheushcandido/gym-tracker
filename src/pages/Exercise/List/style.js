@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#fff',
-      paddingTop: 20,
+      paddingTop: 10,
       paddingBottom: 90,
     },
     Exercises: {
@@ -43,7 +43,27 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: 25,
         fontWeight: "bold",
-    }
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '90%',
+        height: 40,
+        marginLeft: 15,
+        borderColor: '#F92e6a',
+        borderWidth: 3,
+        borderRadius: 50,
+        paddingHorizontal: 10,
+        marginVertical: 10,
+        backgroundColor: '#fff',
+    },
+    searchIcon: {
+        marginRight: 10,
+    },
+    searchBar: {
+        flex: 1,
+        height: '100%',
+    },
 });
 
 export default styles;
