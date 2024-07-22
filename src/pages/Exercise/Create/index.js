@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { database } from "../../../config/firebaseconfig";
 import { collection, addDoc } from "firebase/firestore";
@@ -8,7 +8,7 @@ import { Picker } from "@react-native-picker/picker";
 
 export default function CreateExercise({ navigation }) {
     const [name, setName] = useState(null);
-    const [category, setCategory] = useState("peito");
+    const [category, setCategory] = useState("default");
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -30,6 +30,10 @@ export default function CreateExercise({ navigation }) {
     async function addExercise() {
         if (!userId) {
             console.error('User ID not found');
+            return;
+        }
+        if (category === "default") {
+            Alert.alert("Erro", "Por favor, selecione uma categoria.");
             return;
         }
 
@@ -61,6 +65,7 @@ export default function CreateExercise({ navigation }) {
                 style={styles.inputText}
                 onValueChange={(itemValue) => setCategory(itemValue)}
             >
+                <Picker.Item label="Selecione uma categoria..." value="default" />
                 <Picker.Item label="Peito" value="peito" />
                 <Picker.Item label="Costas" value="costas" />
                 <Picker.Item label="Pernas" value="pernas" />

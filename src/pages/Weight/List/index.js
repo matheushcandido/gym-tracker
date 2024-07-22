@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { database } from "../../../config/firebaseconfig";
 import { collection, query, where, onSnapshot, deleteDoc, doc } from "firebase/firestore";
@@ -32,7 +32,11 @@ export default function ListWeight({ navigation }) {
                     list.push({ ...doc.data(), id: doc.id });
                 });
 
-                list.sort((a, b) => b.date - a.date);
+                list.sort((a, b) => {
+                    const dateA = new Date(a.date.split('/').reverse().join('-'));
+                    const dateB = new Date(b.date.split('/').reverse().join('-'));
+                    return dateB - dateA;
+                });
 
                 setWeight(list);
             });
@@ -41,9 +45,25 @@ export default function ListWeight({ navigation }) {
         }
     }, [userId]);
 
-    function deleteWeight(id) {
-        deleteDoc(doc(database, "Weights", id));
-    }
+    const deleteWeight = (id) => {
+        Alert.alert(
+            "Confirmação",
+            "Você tem certeza que deseja excluir este exercício?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Excluir",
+                    onPress: () => {
+                        deleteDoc(doc(database, "Weights", id));
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
 
     return (
         <View style={styles.container}>

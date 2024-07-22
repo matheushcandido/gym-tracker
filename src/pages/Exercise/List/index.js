@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, FlatList, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, TextInput, Alert } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { database } from "../../../config/firebaseconfig";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -47,9 +47,25 @@ export default function ListExercise({ navigation }) {
         setFilteredExercises(filteredData);
     }, [search, exercise]);
 
-    function deleteExercise(id) {
-        deleteDoc(doc(database, "Exercises", id));
-    }
+    const deleteExercise = (id) => {
+        Alert.alert(
+            "Confirmação",
+            "Você tem certeza que deseja excluir este exercício?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Excluir",
+                    onPress: () => {
+                        deleteDoc(doc(database, "Exercises", id));
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    };
 
     return (
         <View style={styles.container}>

@@ -17,7 +17,7 @@ export default function DetailsExercise({ navigation, route }) {
                 name: name,
                 category: category
             });
-            navigation.navigate("Exercises");
+            navigation.navigate("ExerciseList");
         } catch (error) {
             console.error("Error updating document: ", error);
         }

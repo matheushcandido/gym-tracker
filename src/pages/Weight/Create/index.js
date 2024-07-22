@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { database } from "../../../config/firebaseconfig";
 import { collection, addDoc } from "firebase/firestore";
@@ -33,6 +33,10 @@ export default function CreateWeight({ navigation }) {
         if (!userId) {
             console.error('User ID not found');
             return;
+        }
+
+        if (weight === null || weight === "") {
+            Alert.alert("Erro", "Por favor, preencha o campo de peso.");
         }
 
         try {
